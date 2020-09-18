@@ -47,10 +47,6 @@ client.on('ready', async () => {
   }
 });
 
-async function secdif(endDate, startDate){
-  return (endDate.getTime() - startDate.getTime()) / 1000;
-}
-
 client.on('message', async (message) => {
   if(message.author.bot) return;
   if(message.channel.type === 'dm') return;
