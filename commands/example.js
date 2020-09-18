@@ -1,4 +1,7 @@
-module.exports.aliases = ['test'];
-module.exports = async (client, message, args) => {
-  message.channel.send('Hi');
+module.exports.config = {
+  description: 'This is the command description!',
+  aliases: ['test']
+}
+module.exports.run = async (client, message, args) => {
+  return message.channel.send('Hey!');
 }
