@@ -1,7 +1,9 @@
 module.exports.config = {
-  description: 'This is the command description!',
-  aliases: ['test']
+  description: 'Sends a bot message.',
+  usage: '<message>',
+  aliases: ['send']
 }
 module.exports.run = async (client, message, args) => {
-  return message.channel.send('Hey!');
+  if(!args[0]) return message.channel.send('You must specify a message.');
+  return message.channel.send(`**${message.author.tag} says:** ${args.join(' ')}`);
 }
