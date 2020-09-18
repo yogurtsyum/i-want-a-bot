@@ -1,23 +1,12 @@
-const express = require('express');
-const app = express();
-
-app.get('/', (request, response) => {
-  response.sendStatus(200);
-});
-
-let listener = app.listen(process.env.PORT, () => {
-  console.log('Your app is currently listening on port: ' + listener.address().port);
-});
-
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const chalk = require('chalk');
 const figlet = require('figlet');
 const fs = require('fs');
 const config = require('./config.js');
-const colors = require('./colors.js');
+const assets = require('./assets.js');
 client.config = config;
-client.colors = colors;
+client.assets = assets;
 
 let commandlist = [];
 client.commandlist = commandlist;
@@ -31,7 +20,8 @@ fs.readdir('./commands/', async (err, files) => {
       let commandFile = require(`./commands/${file}`);
       commandlist.push({
         file: commandFile,
-        name: file.split('.')[0]
+        name: file.split('.')[0],
+        config: commandFile.config
       });
   });
 });
@@ -77,12 +67,12 @@ client.on('message', async (message) => {
     commandName = args[0].toLowerCase();
     args.shift();
   }
-  let command = commandlist.findIndex((cmd) => cmd.name === commandName);
-  if(command == -1){
-    command = commandlist.findIndex((cmd) => cmd.file.aliases.includes(commandName));
-    if(command == -1) return;
+  let command = commandlist.find((cmd) => cmd.name === commandName);
+  if(!command){
+    command = commandlist.find((cmd) => cmd.config.aliases.includes(commandName));
+    if(!command) return;
   }
-  commandlist[command].file.run(client, message, args);
+  command.file.run(client, message, args);
 });
 
-client.login(process.env.token);
+client.login(config.token);
