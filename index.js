@@ -88,7 +88,7 @@ client.ws.on('INTERACTION_CREATE', async (interaction) => {
     return;
   }
   interaction.channel = channel;
-  let command = commandList.find((cmd) => cmd.slashId === interaction.data.id);
+  let command = commandList.find((cmd) => cmd.config.slashId === interaction.data.id);
   if(!command) return;
   let args = interaction.data.options;
   let respond = async (data, type = 4) => {
