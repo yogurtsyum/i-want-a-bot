@@ -71,4 +71,39 @@ client.on('message', async (message) => {
   command.file.run(client, message, args);
 });
 
+client.ws.on('INTERACTION_CREATE', async (interaction) => {
+  let guildId = interaction.guild_id;
+  let guild;
+  try {
+    guild = await client.guilds.fetch(guildId);
+  } catch (err) {
+    return;
+  }
+  interaction.guild = guild;
+  let channelId = interaction.channel_id;
+  let channel;
+  try {
+    channel = await guild.channels.cache.get(channelId);
+  } catch (err) {
+    return;
+  }
+  interaction.channel = channel;
+  let command = commandList.find((cmd) => cmd.slashId === interaction.data.id);
+  if(!command) return;
+  let args = interaction.data.options;
+  let respond = async (data, type = 4) => {
+    if(typeof data === 'string') {
+      data = {
+        content: data
+      }
+    }
+    client.api.interactions(interaction.id, interaction.token).callback.post({
+      data: {
+        type, data
+      }
+    })
+  }
+  command.file.runInteractions(client, interaction, args, respond);
+});
+
 client.login(config.token);
